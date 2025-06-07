@@ -1,29 +1,15 @@
 #include "charybdis.dtsi"
 #include "split_input_common.dtsi"
 
-/ {
-    chosen {
-        zmk,kscan = &mock_kscan;
-        zephyr,display = &oled;
-    };
-
-    mock_kscan: kscan_1 {
-        compatible = "zmk,kscan-mock";
-        columns = <0>;
-        rows = <0>;
-        events = <0>;
-    };
+&zmk_display {
+    status = "okay";
+    label = "Status OLED";
+    display = <&oled>;
 };
 
-&trackball_listener {
+&i2c0 {
     status = "okay";
-};
-&trackball_listener2 {
-    status = "okay";
-};
-&pro_micro_i2c {
-    status = "okay";
-    
+
     oled: ssd1306@3c {
         compatible = "sinowealth,sh1106";
         reg = <0x3c>;
@@ -37,5 +23,27 @@
         com-invdir;
         inversion-on;
         prechargep = <0x22>;
+    };
+};
+
+&trackball_listener {
+    status = "okay";
+};
+
+&trackball_listener2 {
+    status = "okay";
+};
+
+/ {
+    chosen {
+        zmk,kscan = &mock_kscan;
+        zephyr,display = &oled;
+    };
+
+    mock_kscan: kscan_1 {
+        compatible = "zmk,kscan-mock";
+        columns = <0>;
+        rows = <0>;
+        events = <0>;
     };
 };
