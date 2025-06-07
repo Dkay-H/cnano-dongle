@@ -1,12 +1,6 @@
 #include "charybdis.dtsi"
 #include "split_input_common.dtsi"
 
-&zmk_display {
-    status = "okay";
-    label = "Status OLED";
-    display = <&oled>;
-};
-
 &i2c0 {
     status = "okay";
 
@@ -37,7 +31,7 @@
 / {
     chosen {
         zmk,kscan = &mock_kscan;
-        zephyr,display = &oled;
+        zephyr,display = &oled;  // ✅ 이거만 있으면 됨
     };
 
     mock_kscan: kscan_1 {
