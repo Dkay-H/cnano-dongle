@@ -1,5 +1,42 @@
+name: Build ZMK Firmware
+
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout config
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            ninja-build cmake python3-dev python3-pip dfu-util wget gperf
+          pip3 install west
+
+      - name: Initialize west
+        run: |
+          west init -l config
+          west update
+          west zephyr-export
+          pip3 install -r zephyr/scripts/requirements.txt
+
+      - name: Build firmware
+        run: |
+          west build -s zmk/app -b nrf52840dongle_nrf52840 -- -DSHIELD=charybdis_dongle
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: firmware
+          path: |
+            build/zephyr/*.uf2
+            build/zephyr/*.bin
+            build/zephyr/*.hex   # ✅ 여기가 핵심
